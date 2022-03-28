@@ -1,0 +1,16 @@
+BEGIN;
+INSERT INTO transfers(from_account_id,to_account_id,amount) VALUES(412,413,10) RETURNING *;
+INSERT INTO entries(account_id,amount) VALUES(412,-10) RETURNING *;
+INSERT INTO entries(account_id,amount) VALUES(413,10) RETURNING *;
+SELECT * FROM account WHERE id =412 FOR UPDATE ;
+UPDATE account SET balance = 90 WHERE id =412 RETURNING *;
+SELECT * FROM account WHERE id =413 FOR UPDATE;
+UPDATE account SET balance =110 WHERE id =413 RETURNING *;
+ROLLBACK;
+
+2
+UPDATE account SET balance = balance - 10 where id=412 RETURNING *;
+UPDATE account SET balance = balance + 10 where id=413 RETURNING *;
+
+UPDATE account SET balance = balance - 10 where id=413 RETURNING *;
+UPDATE account SET balance = balance + 10 where id=412 RETURNING *;
